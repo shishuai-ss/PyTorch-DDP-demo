@@ -5,5 +5,5 @@ from torch.utils.data import DataLoader
 
 
 def MNIST(data_dir: str, batch_size: int, is_training: bool = True) -> DataLoader:
-    ds = datasets.MNIST(data_dir, transform=transforms.ToTensor(), train=is_training)
+    ds = datasets.MNIST(data_dir, transform=transforms.ToTensor(), train=is_training, download=True)
     return DataLoader(ds, batch_size, shuffle=is_training)

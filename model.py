@@ -33,3 +33,9 @@ class ConvNet(nn.Module):
         x = self.pool1(self.layer1(x))
         x = self.pool2(self.layer2(x))
         return self.fc(self.flatten(x))
+
+
+if __name__ == '__main__':
+    image = torch.rand((1, 1, 28, 28))
+    net = ConvNet(10)
+    print(f"输出的单元数: {net(image).shape}")
