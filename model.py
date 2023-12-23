@@ -26,9 +26,10 @@ class ConvNet(nn.Module):
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.layer2 = conv2d(16, 32, kernel_size=5)
         self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.flatten = nn.Flatten()
         self.fc = nn.Linear(7 * 7 * 32, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.pool1(self.layer1(x))
         x = self.pool2(self.layer2(x))
-        return self.fc(x)
+        return self.fc(self.flatten(x))
