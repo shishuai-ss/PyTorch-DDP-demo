@@ -42,12 +42,10 @@ def train(model: nn.Module,
           scaler: GradScaler,
           args: Namespace
           ):
-
     val_losses = []
-    logging.info(f"sampler: {train_loader.sampler.__class__.__name__}")
     for epoch in range(args.epochs):
         train_loader.sampler.set_epoch(epoch)
-        train_loss = train_epoch(model, train_loader, optimizer, criterion, device, args, scaler)
+        train_loss = train_epoch(model, train_loader, optimizer, criterion, device, scaler, args)
         if dist.get_rank() == 0:
             logging.info(f"rank 0 epoch: {epoch + 1} train loss: {train_loss}")
         if epoch != 0 and epoch % args.val_epoch == 0 and dist.get_rank() == 0:
@@ -103,8 +101,8 @@ def train_epoch(model: nn.Module,
                 optimizer: optim.Optimizer,
                 criterion: nn.Module,
                 device: torch.device,
+                scaler: GradScaler,
                 args: Namespace,
-                scaler: GradScaler
                 ):
     model.train()
     bar = tqdm(desc=f"train", total=len(train_loader))
@@ -139,6 +137,8 @@ def main(args):
     train_loader = CIFAR10(args.data_dir, args.batch_size, True)
     val_loader = CIFAR10(args.data_dir, args.batch_size, False)
     scaler = GradScaler(enabled=args.use_mix_precision)
+    logging.info(f"train sampler: {train_loader.sampler.__class__.__name__}")
+    logging.info(f"val sampler: {train_loader.sampler.__class__.__name__}")
     train(model, train_loader, val_loader, optimizer, criterion, device, scaler, args)
     test(model, val_loader, criterion, device)
 
