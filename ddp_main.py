@@ -54,7 +54,7 @@ def train(model: nn.Module,
             if len(val_losses) != 0:
                 checkpoint = Path(args.save_dir) / f"resnet34-{epoch + 1}-{val_loss}.pth"
                 torch.save(model.module.state_dict(), checkpoint)
-            elif min(val_loss) > val_loss:
+            elif min(val_losses) > val_loss:
                 checkpoint = Path(args.save_dir) / f"resnet34-{epoch + 1}-{val_loss}.pth"
                 torch.save(model.module.state_dict(), checkpoint)
             val_losses.append(val_loss)
@@ -105,7 +105,8 @@ def train_epoch(model: nn.Module,
                 args: Namespace,
                 ):
     model.train()
-    bar = tqdm(desc=f"train", total=len(train_loader))
+    if dist.get_rank() == 0:
+        train_loader = tqdm(desc=f"train", iterable=train_loader)
     train_loss_epoch = torch.tensor(0.)
     for images, labels in train_loader:
         images, labels = images.to(device), labels.to(device)
@@ -118,8 +119,7 @@ def train_epoch(model: nn.Module,
         scaler.step(optimizer)
         scaler.update()
         train_loss_epoch += loss.cpu()
-        bar.update()
-    bar.close()
+        # bar.update()
     return train_loss_epoch.cpu().item() / len(train_loader)
 
 
