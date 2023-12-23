@@ -31,24 +31,14 @@ def CIFAR10(data_dir: str, batch_size: int, is_training: bool = True) -> DataLoa
     trans = transforms.Compose(tran_list)
     dataset = datasets.CIFAR10(data_dir, is_training, trans, download=True)
     if is_training:
-        sampler = DistributedSampler(
-            dataset,
-            shuffle=True
-        )
         return DataLoader(
             dataset,
             batch_size,
             num_workers=2,
-            sampler=sampler
+            sampler=DistributedSampler(dataset, shuffle=True)
         )
     else:
-        return DataLoader(
-            dataset,
-            batch_size,
-            num_workers=2,
-            sampler=None
-        )
-
+        return DataLoader(dataset,batch_size,num_workers=2)
 
 
 if __name__ == '__main__':

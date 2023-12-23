@@ -53,14 +53,14 @@ def train(model: nn.Module,
             logging.info(f"epoch: {epoch + 1} val loss: {val_loss}, val accuracy: {val_accuracy * 100: .2f}")
             if len(val_losses) != 0:
                 checkpoint = Path(args.save_dir) / f"resnet34-{epoch + 1}-{val_loss}.pth"
-                torch.save(model.model.state_dict(), checkpoint)
+                torch.save(model.module.state_dict(), checkpoint)
             elif min(val_loss) > val_loss:
                 checkpoint = Path(args.save_dir) / f"resnet34-{epoch + 1}-{val_loss}.pth"
-                torch.save(model.model.state_dict(), checkpoint)
+                torch.save(model.module.state_dict(), checkpoint)
             val_losses.append(val_loss)
         if dist.get_rank() == 0:
             checkpoint = Path(args.save_dir) / f"latest.pth"
-            torch.save(model.model.state_dict(), checkpoint)
+            torch.save(model.module.state_dict(), checkpoint)
 
 
 def test(model: nn.Module,
