@@ -51,7 +51,7 @@ def train(model: nn.Module,
         if epoch != 0 and epoch % args.val_epoch == 0 and dist.get_rank() == 0:
             val_loss, val_accuracy = val_epoch(model, val_loader, criterion, device)
             logging.info(f"epoch: {epoch + 1} val loss: {val_loss}, val accuracy: {val_accuracy * 100: .2f}")
-            if len(val_losses) != 0:
+            if len(val_losses) == 0:
                 checkpoint = Path(args.save_dir) / f"resnet34-{epoch + 1}-{val_loss}.pth"
                 torch.save(model.module.state_dict(), checkpoint)
             elif min(val_losses) > val_loss:
@@ -138,7 +138,7 @@ def main(args):
     val_loader = CIFAR10(args.data_dir, args.batch_size, False)
     scaler = GradScaler(enabled=args.use_mix_precision)
     logging.info(f"train sampler: {train_loader.sampler.__class__.__name__}")
-    logging.info(f"val sampler: {train_loader.sampler.__class__.__name__}")
+    logging.info(f"val sampler: {val_loader.sampler.__class__.__name__}")
     train(model, train_loader, val_loader, optimizer, criterion, device, scaler, args)
     test(model, val_loader, criterion, device)
 
