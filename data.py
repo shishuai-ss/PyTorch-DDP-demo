@@ -1,4 +1,3 @@
-import torchvision
 from torchvision import transforms
 from torchvision import datasets
 from torch.utils.data import DataLoader
@@ -43,3 +42,7 @@ def CIFAR10(data_dir: str, batch_size: int, is_training: bool = True) -> DataLoa
         num_workers=2,
         shuffle=sampler
     )
+
+
+if __name__ == '__main__':
+    CIFAR10("../data", 32, True)

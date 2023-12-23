@@ -44,6 +44,7 @@ def train(model: nn.Module,
           ):
 
     val_losses = []
+    logging.info(f"sampler: {train_loader.sampler.__class__.__name__}")
     for epoch in range(args.epochs):
         train_loader.sampler.set_epoch(epoch)
         train_loss = train_epoch(model, train_loader, optimizer, criterion, device, args, scaler)
@@ -127,6 +128,7 @@ def train_epoch(model: nn.Module,
 def main(args):
     if not Path(args.save_dir).exists():
         Path(args.save_dir).mkdir(parents=True, exist_ok=True)
+    logging.basicConfig(level=logging.INFO)
     dist.init_process_group(backend="nccl", init_method="env://")
     device = torch.device("cuda", args.local_rank)
     model = ResNet34(10)
