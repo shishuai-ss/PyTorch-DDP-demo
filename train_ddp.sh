@@ -6,4 +6,4 @@ module load cuda/11.3
 
 source activate ss_yolo
 
- python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 --master_addr="localhost" --master_port=12345 mnist-env.py --use_mix_precision --data-dir /data/public/cifar
+ python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 --master_addr="localhost" --master_port=12345 ddp_main.py --use_mix_precision --data-dir /data/public/cifar

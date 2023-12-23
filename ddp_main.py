@@ -25,8 +25,8 @@ def parse_args() -> Namespace:
     parser.add_argument("--data-dir", type=str, default="../data")
     # local_rank：这里指的是当前进程在当前机器中的序号，注意和在全部进程中序号的区别。在ENV模式中，
     # 这个参数是必须的，由启动脚本自动划分，不需要手动指定。要善用local_rank来分配GPU_ID。
-    parser.add_argument("--local-rank", type=int)
-    parser.add_argument("--use-mix-precision", action="store_true")
+    parser.add_argument("--local_rank", type=int)
+    parser.add_argument("--use_mix_precision", action="store_true")
     parser.add_argument("--val-epoch", type=int, default=3)
     parser.add_argument("--save-dir", type=str, default="./weights")
     args = parser.parse_args()
