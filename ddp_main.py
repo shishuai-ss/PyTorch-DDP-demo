@@ -42,7 +42,7 @@ def train(model: nn.Module,
           scaler: GradScaler,
           args: Namespace
           ):
-    model.to(device)
+
     val_losses = []
     for epoch in range(args.epochs):
         train_loader.sampler.set_epoch(epoch)
@@ -128,9 +128,10 @@ def main(args):
     if not Path(args.save_dir).exists():
         Path(args.save_dir).mkdir(parents=True, exist_ok=True)
     dist.init_process_group(backend="nccl", init_method="env://")
-    model = ResNet34(10)
-    model = DistributedDataParallel(model)
     device = torch.device("cuda", args.local_rank)
+    model = ResNet34(10)
+    model.to(device)
+    model = DistributedDataParallel(model)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), 1e-4)
     train_loader = CIFAR10(args.data_dir, args.batch_size, True)
