@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from torchvision import models
 
 
 def conv2d(in_channels: int,
@@ -35,7 +36,18 @@ class ConvNet(nn.Module):
         return self.fc(self.flatten(x))
 
 
+class ResNet34(nn.Module):
+    def __init__(self, num_classes: int):
+        super().__init__()
+        model = models.resnet34()
+        model.fc = nn.Linear(model.fc.in_features, num_classes)
+        self.model = model
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.model(x)
+
+
 if __name__ == '__main__':
-    image = torch.rand((1, 1, 28, 28))
-    net = ConvNet(10)
-    print(f"输出的单元数: {net(image).shape}")
+    model = ResNet34(10)
+    image = torch.randn((1, 3, 224, 224))
+    print(model(image).shape)
