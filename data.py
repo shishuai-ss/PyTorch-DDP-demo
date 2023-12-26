@@ -1,7 +1,9 @@
+import torch
 from torchvision import transforms
 from torchvision import datasets
-from torch.utils.data import DataLoader, RandomSampler
+from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch.utils.data.distributed import DistributedSampler
+from torch import distributed as dist
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
@@ -33,7 +35,10 @@ def CIFAR10(data_dir: str, batch_size: int, is_training: bool = True) -> DataLoa
     if is_training:
         sampler = DistributedSampler(dataset, shuffle=True)
     else:
-        sampler = RandomSampler(dataset)
+        world_size = dist.get_world_size()
+        current_rank = dist.get_rank()
+        indices = torch.arange(current_rank, len(dataset), world_size)
+        sampler = SubsetRandomSampler(indices)
     return DataLoader(dataset, batch_size, num_workers=2, sampler=sampler)
 
 
