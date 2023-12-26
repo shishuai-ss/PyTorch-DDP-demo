@@ -91,7 +91,7 @@ def val_epoch(model: nn.Module,
         images, labels = images.to(device), labels.to(device)
         predictions = model(images)
         loss = criterion(predictions, labels)
-        acc_top1 = accuracy(predictions, labels)
+        acc_top1 = accuracy(predictions, labels)[0]
         reduce_tensor(loss)
         reduce_tensor(acc_top1)
         epoch_loss.update(loss.cpu().item(), labels.shape[0])
