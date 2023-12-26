@@ -19,7 +19,7 @@ from utils import reduce_tensor
 def parse_args() -> Namespace:
     parser = ArgumentParser("训练网络的参数")
     # parser.add_argument("--gpuid", type=int, default=0, help="使用那一块gpu")
-    parser.add_argument("--batch-size", type=int, default=96)
+    parser.add_argument("--batch-size", type=int, default=120)
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--data-dir", type=str, default="../data")
     # local_rank：这里指的是当前进程在当前机器中的序号，注意和在全部进程中序号的区别。在ENV模式中，

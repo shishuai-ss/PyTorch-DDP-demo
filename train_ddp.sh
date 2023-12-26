@@ -6,4 +6,4 @@ module load cuda/11.3
 
 source activate ss_yolo
 
-torchrun --nproc_per_node=2 --nnodes=1 --node_rank=0 --master_addr="localhost" --master_port=12345 ddp_main.py --use_mix_precision --data-dir /data/public/cifar
+torchrun --nproc_per_node=2 --nnodes=1 --node_rank=0 --master_addr="localhost" --master_port=12345 ddp_main.py --data-dir /data/public/cifar
