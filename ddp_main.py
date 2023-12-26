@@ -86,7 +86,7 @@ def val_epoch(model: nn.Module,
     acc_top1 = AverageMeter()
     model.eval()
     if dist.get_rank() == 0:
-        val_loader = tqdm(desc=f"val", total=len(val_loader))
+        val_loader = tqdm(desc=f"val", iterable=val_loader)
     for images, labels in val_loader:
         images, labels = images.to(device), labels.to(device)
         predictions = model(images)
