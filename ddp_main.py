@@ -52,9 +52,8 @@ def train(model: nn.Module,
             logging.info(f"rank 0 epoch: {epoch + 1} train loss: {train_loss}")
         if epoch != 0 and epoch % args.val_epoch == 0:
             val_loss, val_accuracy = val_epoch(model, val_loader, criterion, device)
+            logging.info(f"epoch: {epoch + 1} val loss: {val_loss}, val accuracy: {val_accuracy * 100: .2f}")
             if dist.get_rank() == 0:
-                # val_loss, val_accuracy = val_epoch(model, val_loader, criterion, device)
-                logging.info(f"epoch: {epoch + 1} val loss: {val_loss}, val accuracy: {val_accuracy * 100: .2f}")
                 if len(val_losses) == 0:
                     checkpoint = Path(args.save_dir) / f"resnet34-{epoch + 1}-{val_loss}.pth"
                     torch.save(model.module.state_dict(), checkpoint)
