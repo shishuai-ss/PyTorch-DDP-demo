@@ -83,7 +83,7 @@ def val_epoch(model: nn.Module,
               device: torch.device,
               ):
     epoch_loss = AverageMeter()
-    acc_top1 = AverageMeter()
+    epoch_top1 = AverageMeter()
     model.eval()
     if dist.get_rank() == 0:
         val_loader = tqdm(desc=f"val", iterable=val_loader)
@@ -95,8 +95,8 @@ def val_epoch(model: nn.Module,
         reduce_tensor(loss)
         reduce_tensor(acc_top1)
         epoch_loss.update(loss.cpu().item(), labels.shape[0])
-        acc_top1.update(acc_top1.cpu().item())
-    return epoch_loss.avg, acc_top1.avg
+        epoch_top1.update(acc_top1.cpu().item())
+    return epoch_loss.avg, epoch_top1.avg
 
 
 def train_epoch(model: nn.Module,
