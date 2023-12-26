@@ -30,7 +30,7 @@ def parse_args() -> Namespace:
     parser.add_argument("--save-dir", type=str, default="./weights")
     args = parser.parse_args()
     if args.local_rank == -1:
-        args.local_rank = os.environ["LOCAL_RANK"]
+        args.local_rank = int(os.environ["LOCAL_RANK"])
     return args
 
 
