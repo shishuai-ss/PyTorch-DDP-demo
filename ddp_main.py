@@ -50,9 +50,10 @@ def train(model: nn.Module,
         train_loss = train_epoch(model, train_loader, optimizer, criterion, device, scaler, args)
         if dist.get_rank() == 0:
             logging.info(f"rank 0 epoch: {epoch + 1} train loss: {train_loss}")
-        if epoch != 0 and epoch % args.val_epoch == 0:
+        if epoch % args.val_epoch == 0:
             val_loss, val_accuracy = val_epoch(model, val_loader, criterion, device)
-            logging.info(f"epoch: {epoch + 1} val loss: {val_loss}, val accuracy: {val_accuracy * 100: .2f}")
+            if dist.get_rank() == 0:
+                logging.info(f"epoch: {epoch + 1} val loss: {val_loss}, val accuracy: {val_accuracy: .2f}")
             if dist.get_rank() == 0:
                 if len(val_losses) == 0:
                     checkpoint = Path(args.save_dir) / f"resnet34-{epoch + 1}-{val_loss}.pth"
@@ -85,6 +86,7 @@ def val_epoch(model: nn.Module,
     epoch_loss = AverageMeter()
     epoch_top1 = AverageMeter()
     model.eval()
+    loss, acc_top1 = None, None
     if dist.get_rank() == 0:
         val_loader = tqdm(desc=f"val", iterable=val_loader)
     for images, labels in val_loader:
@@ -96,6 +98,7 @@ def val_epoch(model: nn.Module,
         reduce_tensor(acc_top1)
         epoch_loss.update(loss.cpu().item(), labels.shape[0])
         epoch_top1.update(acc_top1.cpu().item())
+    logging.info(f"{dist.get_rank()} loss: {loss.cpu().item()}, acc: {acc_top1.cpu().item()}")
     return epoch_loss.avg, epoch_top1.avg
 
 
