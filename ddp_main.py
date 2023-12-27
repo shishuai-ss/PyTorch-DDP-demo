@@ -94,8 +94,8 @@ def val_epoch(model: nn.Module,
         predictions = model(images)
         loss = criterion(predictions, labels)
         acc_top1 = accuracy(predictions, labels)[0]
-        reduce_tensor(loss)
-        reduce_tensor(acc_top1)
+        loss = reduce_tensor(loss)
+        acc_top1 = reduce_tensor(acc_top1)
         epoch_loss.update(loss.cpu().item(), labels.shape[0])
         epoch_top1.update(acc_top1.cpu().item())
     logging.info(f"{dist.get_rank()} loss: {loss.cpu().item()}, acc: {acc_top1.cpu().item()}")
